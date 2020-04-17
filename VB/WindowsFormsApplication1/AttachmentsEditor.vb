@@ -39,7 +39,7 @@ Namespace WindowsFormsApplication1
 					MessageBox.Show(String.Format("The file: {0} is already added to collection", openFileDialog.SafeFileName))
 					Return
 				End If
-				richEditControl1.Document.Fields.Add(richEditControl1.Document.Range.End, "DOCVARIABLE " & openFileDialog.SafeFileName)
+				richEditControl1.Document.Fields.Create(richEditControl1.Document.Range.End, "DOCVARIABLE " & openFileDialog.SafeFileName)
 				filesCollection.Add(openFileDialog.SafeFileName, New FileFieldInfo() With {.DocField = richEditControl1.Document.Fields(richEditControl1.Document.Fields.Count - 1), .FileName = openFileDialog.SafeFileName, .FullFileName = openFileDialog.FileName})
 				richEditControl1.Document.Fields.Update()
 
@@ -86,9 +86,9 @@ Namespace WindowsFormsApplication1
 			If filesCollection.ContainsKey(e.VariableName) Then
 				Dim server As IRichEditDocumentServer = richEditControl1.CreateDocumentServer()
 				Dim info As FileFieldInfo = filesCollection(e.VariableName)
-				server.Document.InsertImage(server.Document.Range.End, New Bitmap(Icon.ExtractAssociatedIcon(info.FullFileName).ToBitmap(), New Size(16, 16)))
+				server.Document.Images.Insert(server.Document.Range.End, New Bitmap(Icon.ExtractAssociatedIcon(info.FullFileName).ToBitmap(), New Size(16, 16)))
 				Dim range As DocumentRange = server.Document.AppendText(info.FileName & "; ")
-				Dim hyperlink As Hyperlink = server.Document.CreateHyperlink(range.Start, range.Length - 1)
+				Dim hyperlink As Hyperlink = server.Document.Hyperlinks.Create(range.Start, range.Length - 1)
 				hyperlink.Target = info.FullFileName
 				hyperlink.ToolTip = info.FileName
 				hyperlink.NavigateUri = info.FullFileName

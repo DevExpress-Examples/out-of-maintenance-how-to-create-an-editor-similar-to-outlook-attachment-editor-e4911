@@ -36,7 +36,7 @@ namespace WindowsFormsApplication1 {
                     MessageBox.Show(String.Format("The file: {0} is already added to collection", openFileDialog.SafeFileName));
                     return;
                 }
-                richEditControl1.Document.Fields.Add(richEditControl1.Document.Range.End, "DOCVARIABLE " + openFileDialog.SafeFileName);
+                richEditControl1.Document.Fields.Create(richEditControl1.Document.Range.End, "DOCVARIABLE " + openFileDialog.SafeFileName);
                 filesCollection.Add(openFileDialog.SafeFileName, new FileFieldInfo() { DocField = richEditControl1.Document.Fields[richEditControl1.Document.Fields.Count - 1], FileName = openFileDialog.SafeFileName, FullFileName = openFileDialog.FileName });
                 richEditControl1.Document.Fields.Update();
 
@@ -82,9 +82,9 @@ namespace WindowsFormsApplication1 {
             if(filesCollection.ContainsKey(e.VariableName)) {
                 IRichEditDocumentServer server = richEditControl1.CreateDocumentServer();
                 FileFieldInfo info = filesCollection[e.VariableName];
-                server.Document.InsertImage(server.Document.Range.End, new Bitmap(Icon.ExtractAssociatedIcon(info.FullFileName).ToBitmap(), new Size(16, 16)));
+                server.Document.Images.Insert(server.Document.Range.End, new Bitmap(Icon.ExtractAssociatedIcon(info.FullFileName).ToBitmap(), new Size(16, 16)));
                 DocumentRange range = server.Document.AppendText(info.FileName + "; ");
-                Hyperlink hyperlink = server.Document.CreateHyperlink(range.Start, range.Length - 1);
+                Hyperlink hyperlink = server.Document.Hyperlinks.Create(range.Start, range.Length - 1);
                 hyperlink.Target = info.FullFileName;
                 hyperlink.ToolTip = info.FileName;
                 hyperlink.NavigateUri = info.FullFileName;
